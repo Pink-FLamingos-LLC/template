@@ -219,7 +219,7 @@ const appHandle: Handle = async ({ event, resolve }) => {
 export const handle = sequence(
   initCloudflareSentryHandle({
     dsn: PUBLIC_SENTRY_DSN,
-    tracesSampleRate: 1.0,
+    tracesSampleRate: Number(env.SENTRY_TRACES_SAMPLE_RATE) || 0.2,
     beforeSend: sentryBeforeSend,
   }),
   sentryHandle(),

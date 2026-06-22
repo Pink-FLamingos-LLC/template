@@ -13,8 +13,7 @@
     ],
   },
   "vars": {
-    "BETTER_AUTH_URL": "http://localhost:5173",
-    "DEMO_MODE": "true",
+    "DEMO_MODE": "false",
   },
   "d1_databases": [
     {

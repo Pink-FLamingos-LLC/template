@@ -7,7 +7,7 @@ const config = {
   },
   kit: {
     adapter: adapter(),
-    csrf: { trustedOrigins: ["*"] },
+    csrf: { trustedOrigins: [] },
     experimental: {
       instrumentation: {
         server: true,

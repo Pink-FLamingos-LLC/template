@@ -35,11 +35,18 @@ export const actions: Actions = {
     const password = (formData.get("password") as string) ?? "";
     const rememberMe = formData.get("rememberMe") === "on";
 
+    const ip = event.request.headers.get("cf-connecting-ip") ?? "unknown";
+
     try {
       await auth.api.signInEmail({
         body: { email, password, callbackURL: "/", rememberMe },
       });
     } catch (error) {
+      console.warn("[audit] Failed login", {
+        email,
+        ip,
+        error: error instanceof Error ? error.message : String(error),
+      });
       if (error instanceof APIError) {
         return fail(400, { message: "Invalid credentials" });
       }

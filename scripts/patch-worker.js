@@ -14,7 +14,6 @@ try {
     console.log("[patch-worker] StateManager export already present, skipping.");
   }
 } catch (err) {
-  console.warn(
-    "[patch-worker] Could not read _worker.js. This is expected if the SvelteKit build hasn't run yet.",
-  );
+  console.error("[patch-worker] Could not read _worker.js:", err.message);
+  process.exit(1);
 }
