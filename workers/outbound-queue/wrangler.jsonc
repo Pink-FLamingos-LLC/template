@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "app-outbound-queue",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-08",
+  "vars": {
+    "EMAIL_FROM_ADDRESS": "hello@example.com",
+  },
+  "queues": {
+    "consumers": [
+      {
+        "queue": "app-outbound",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+      },
+    ],
+  },
+}
