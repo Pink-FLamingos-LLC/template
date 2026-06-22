@@ -3,8 +3,39 @@
   import ShieldCheckIcon from 'phosphor-svelte/lib/ShieldCheckIcon';
   import LightningIcon from 'phosphor-svelte/lib/LightningIcon';
   import DatabaseIcon from 'phosphor-svelte/lib/DatabaseIcon';
+  import CreditCardIcon from 'phosphor-svelte/lib/CreditCardIcon';
 
   let { data } = $props();
+  let loading = $state<'checkout' | 'billing' | null>(null);
+
+  async function createCheckout() {
+    loading = 'checkout';
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
+      const data: { url: string } = await res.json();
+      window.location.href = data.url;
+    } catch {
+      loading = null;
+    }
+  }
+
+  async function manageBilling() {
+    loading = 'billing';
+    try {
+      const res = await fetch('/api/stripe/billing', { method: 'POST' });
+      const data: { url: string } = await res.json();
+      window.location.href = data.url;
+    } catch {
+      loading = null;
+    }
+  }
+
+  function formatDate(d: Date | string | null): string {
+    if (!d) return '';
+    return new Date(d).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+  }
 </script>
 
 {#if data.user}
@@ -43,6 +74,42 @@
 
       <div>
         <div>
+          <CreditCardIcon size={24} weight="fill" />
+        </div>
+        <h2>Subscription</h2>
+        {#if data.subscription}
+          {#if data.subscription.status === 'active' || data.subscription.status === 'trialing'}
+            <div>
+              <p><strong>Status:</strong> {data.subscription.status}</p>
+              {#if data.subscription.currentPeriodEnd}
+                <p><strong>Current period ends:</strong> {formatDate(data.subscription.currentPeriodEnd)}</p>
+              {/if}
+              {#if data.subscription.paymentMethodBrand && data.subscription.paymentMethodLast4}
+                <p><strong>Payment method:</strong> {data.subscription.paymentMethodBrand} ending in {data.subscription.paymentMethodLast4}</p>
+              {/if}
+              {#if data.subscription.cancelAtPeriodEnd}
+                <p>Cancels at end of billing period</p>
+              {/if}
+            </div>
+            <button onclick={manageBilling} disabled={loading === 'billing'}>
+              {loading === 'billing' ? 'Loading...' : 'Manage Billing'}
+            </button>
+          {:else}
+            <p>Your subscription is <strong>{data.subscription.status}</strong>.</p>
+            <button onclick={createCheckout} disabled={loading === 'checkout'}>
+              {loading === 'checkout' ? 'Loading...' : 'Resubscribe'}
+            </button>
+          {/if}
+        {:else}
+          <p>You don't have an active subscription.</p>
+          <button onclick={createCheckout} disabled={loading === 'checkout'}>
+            {loading === 'checkout' ? 'Loading...' : 'Subscribe'}
+          </button>
+        {/if}
+      </div>
+
+      <div>
+        <div>
           <LightningIcon size={24} weight="fill" />
         </div>
         <h2>Worker Integrations</h2>
@@ -59,7 +126,7 @@
         <span>Cloudflare Workers</span>
       </h1>
       <p>
-        Deploy a highly scalable, serverless web app equipped with Better Auth, Drizzle ORM, D1 SQLite database, Cron triggers, Queues, and Svelte 5 runes.
+        Deploy a highly scalable, serverless web app equipped with Better Auth, Drizzle ORM, D1 SQLite database, Cron triggers, Queues, Stripe Payments, and Svelte 5 runes.
       </p>
       <div>
         <a href="/register">Create Account</a>

@@ -7,7 +7,8 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" }).default(false).notNull(),
   image: text("image"),
-  role: text("role").default("user").notNull(), // Custom role field
+  role: text("role").default("user").notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
@@ -112,10 +113,47 @@ export const apikey = sqliteTable(
   (table) => [index("apikey_key_idx").on(table.key), index("apikey_userId_idx").on(table.userId)],
 );
 
+export const stripeSubscription = sqliteTable(
+  "stripe_subscription",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    stripeCustomerId: text("stripe_customer_id").notNull(),
+    status: text("status").notNull().default("none"),
+    priceId: text("price_id"),
+    currentPeriodStart: integer("current_period_start", { mode: "timestamp_ms" }),
+    currentPeriodEnd: integer("current_period_end", { mode: "timestamp_ms" }),
+    cancelAtPeriodEnd: integer("cancel_at_period_end", { mode: "boolean" }).default(false),
+    paymentMethodBrand: text("payment_method_brand"),
+    paymentMethodLast4: text("payment_method_last4"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("stripe_subscription_userId_idx").on(table.userId),
+    index("stripe_subscription_customerId_idx").on(table.stripeCustomerId),
+  ],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   apikeys: many(apikey),
+  stripeSubscriptions: many(stripeSubscription),
+}));
+
+export const stripeSubscriptionRelations = relations(stripeSubscription, ({ one }) => ({
+  user: one(user, {
+    fields: [stripeSubscription.userId],
+    references: [user.id],
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -133,7 +171,7 @@ export const accountRelations = relations(account, ({ one }) => ({
 }));
 
 export const apikeyRelations = relations(apikey, ({ one }) => ({
-  user: one(user, {
+  key: one(user, {
     fields: [apikey.userId],
     references: [user.id],
   }),

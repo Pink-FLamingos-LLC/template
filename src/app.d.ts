@@ -22,6 +22,10 @@ declare global {
         STATE_DO: DurableObjectNamespace;
         OUTBOUND_QUEUE: Queue;
         DEMO_MODE?: string;
+        STRIPE_SECRET_KEY?: string;
+        STRIPE_PUBLISHABLE_KEY?: string;
+        STRIPE_WEBHOOK_SECRET?: string;
+        STRIPE_PRICE_ID?: string;
         CF_VERSION_METADATA?: { id: string };
       };
       context: ExecutionContext;
