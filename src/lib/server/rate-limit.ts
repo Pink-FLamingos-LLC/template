@@ -23,7 +23,7 @@ function getRateLimitKey(event: RequestEvent): string {
   const ip = event.request.headers.get("cf-connecting-ip");
   if (ip) return `ip_${ip}`;
 
-  return "unknown";
+  return `anon_${crypto.randomUUID().slice(0, 8)}`;
 }
 
 export async function checkRateLimit(
