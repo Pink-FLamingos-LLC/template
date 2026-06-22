@@ -8,10 +8,10 @@ interface __BaseEnv_Env {
   AUTH_RATE_LIMITER: RateLimit;
   CF_VERSION_METADATA: WorkerVersionMetadata;
   ASSETS: Fetcher;
-  STRIPE_SECRET_KEY: "";
-  STRIPE_PUBLISHABLE_KEY: "";
-  STRIPE_WEBHOOK_SECRET: "";
-  STRIPE_PRICE_ID: "";
+  STRIPE_SECRET_KEY: string;
+  STRIPE_PUBLISHABLE_KEY: string;
+  STRIPE_WEBHOOK_SECRET: string;
+  STRIPE_PRICE_ID: string;
   PUBLIC_SENTRY_DSN: string;
   SENTRY_ORG: string;
   SENTRY_PROJECT: string;
