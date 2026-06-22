@@ -41,8 +41,7 @@ export const actions: Actions = {
       });
     } catch (error) {
       if (error instanceof APIError) {
-        const msg = error.message || "Invalid credentials";
-        return fail(400, { message: msg, unverified: /email.*verif/i.test(msg), email });
+        return fail(400, { message: "Invalid credentials" });
       }
       return fail(500, { message: "Unexpected error" });
     }
