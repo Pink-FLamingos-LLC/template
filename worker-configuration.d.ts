@@ -19,6 +19,7 @@ interface __BaseEnv_Env {
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string;
   DEMO_MODE: string;
+  STATE_DO_SECRET: string;
   STATE_DO: DurableObjectNamespace /* StateManager */;
 }
 declare namespace Cloudflare {
@@ -43,6 +44,7 @@ declare namespace NodeJS {
       | "BETTER_AUTH_SECRET"
       | "BETTER_AUTH_URL"
       | "DEMO_MODE"
+      | "STATE_DO_SECRET"
     >
   > {}
 }

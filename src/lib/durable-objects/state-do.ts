@@ -2,6 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 
 interface Env {
   DB: D1Database;
+  STATE_DO_SECRET?: string;
 }
 
 export class StateManager extends DurableObject<Env> {
@@ -10,6 +11,11 @@ export class StateManager extends DurableObject<Env> {
   }
 
   async fetch(request: Request): Promise<Response> {
+    const secret = this.env.STATE_DO_SECRET;
+    if (secret && request.headers.get("X-State-DO-Secret") !== secret) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
     const url = new URL(request.url);
     if (url.pathname === "/increment") {
       let count: number = (await this.ctx.storage.get("count")) || 0;
