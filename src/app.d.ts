@@ -27,6 +27,7 @@ declare global {
         STRIPE_WEBHOOK_SECRET?: string;
         STRIPE_PRICE_ID?: string;
         STATE_DO_SECRET?: string;
+        ALLOWED_ORIGINS?: string;
         CF_VERSION_METADATA?: { id: string };
       };
       context: ExecutionContext;

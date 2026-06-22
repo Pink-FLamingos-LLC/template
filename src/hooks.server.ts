@@ -2,6 +2,7 @@ import type { Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import { building } from "$app/environment";
 import { PUBLIC_SENTRY_DSN } from "$env/static/public";
+import { env } from "$env/dynamic/private";
 import { handleErrorWithSentry, sentryHandle, initCloudflareSentryHandle } from "@sentry/sveltekit";
 import { sentryBeforeSend } from "$lib/server/sentry-sanitize";
 import { createAuth } from "$lib/server/auth";
@@ -11,7 +12,23 @@ import { getDb } from "$lib/server/db";
 import { user as userTable } from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
 
-const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
+function getAllowedOrigins(): RegExp[] {
+  const patterns: RegExp[] = [/^https?:\/\/localhost(:\d+)?$/];
+
+  const configured = env.ALLOWED_ORIGINS;
+  if (configured) {
+    for (const origin of configured.split(",")) {
+      const trimmed = origin.trim();
+      if (trimmed) {
+        patterns.push(new RegExp(`^${trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
+      }
+    }
+  }
+
+  return patterns;
+}
+
+const ALLOWED_ORIGINS = getAllowedOrigins();
 
 const VERIFICATION_EXEMPT_PATHS = new Set([
   "/login",
