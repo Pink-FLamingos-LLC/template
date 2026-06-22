@@ -10,6 +10,7 @@ import { svelteKitHandler } from "better-auth/svelte-kit";
 import { isRateLimited, checkRateLimit } from "$lib/server/rate-limit";
 import { getDb } from "$lib/server/db";
 import { user as userTable } from "$lib/server/db/schema";
+import type { Session } from "better-auth";
 import { eq } from "drizzle-orm";
 
 function getAllowedOrigins(): RegExp[] {
@@ -140,10 +141,11 @@ async function authenticate(event: Parameters<Handle>[0]["event"]) {
             .limit(1);
           if (userRow) {
             event.locals.user = userRow;
+            event.locals.session = { userId: userRow.id } as Session;
           }
         }
       } catch {
-        /* API key verification failed */
+        console.error("[auth] API key verification failed");
       }
     }
   }

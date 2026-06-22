@@ -49,7 +49,7 @@ const programmaticSignup = {
 
 const authConfig = {
   baseURL: env.BETTER_AUTH_URL || "http://localhost:5173",
-  secret: env.BETTER_AUTH_SECRET || "development_secret_only",
+  secret: env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,

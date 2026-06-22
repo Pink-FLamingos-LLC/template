@@ -20,9 +20,14 @@ const config = {
       mode: "auto",
       directives: {
         "default-src": ["self"],
+        "script-src": ["self"],
         "style-src": ["self", "unsafe-inline"],
         "font-src": ["self"],
         "img-src": ["self", "data:"],
+        "connect-src": ["self"],
+        "form-action": ["self"],
+        "base-uri": ["self"],
+        "object-src": ["none"],
       },
     },
     typescript: {
