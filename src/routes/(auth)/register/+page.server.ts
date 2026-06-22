@@ -23,6 +23,14 @@ export const actions: Actions = {
       return fail(400, { message: "You must agree to the Terms of Service and Privacy Policy." });
     }
 
+    if (password.length < 8) {
+      return fail(400, { message: "Password must be at least 8 characters." });
+    }
+
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+      return fail(400, { message: "Password must contain uppercase, lowercase, and a number." });
+    }
+
     try {
       await auth.api.signUpEmail({
         body: { name, email, password, callbackURL: "/" },

@@ -7,8 +7,8 @@ export const load: PageServerLoad = async (event) => {
       await event.locals.auth.api.signOut({
         headers: event.request.headers,
       });
-    } catch {
-      // Ignore failure if already signed out
+    } catch (error) {
+      console.error("[logout] Failed to sign out:", error);
     }
   }
   return redirect(302, "/login");

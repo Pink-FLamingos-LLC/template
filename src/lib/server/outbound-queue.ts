@@ -26,6 +26,5 @@ export async function enqueue(msg: OutboundMessage): Promise<void> {
     await queue.send(msg);
   } catch (cause) {
     console.error("[outbound-queue] Failed to enqueue message:", cause);
-    throw cause;
   }
 }

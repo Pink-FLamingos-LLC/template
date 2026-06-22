@@ -57,7 +57,8 @@ export const POST: RequestHandler = async ({ request, platform }) => {
     await syncStripeDataToKV(platform.env.DB, customerId);
   } catch (error) {
     if (error instanceof StripeNotConfiguredError) {
-      return json({ received: true });
+      console.error("[stripe-webhook] Stripe not configured");
+      return new Response("Stripe not configured", { status: 500 });
     }
     throw error;
   }

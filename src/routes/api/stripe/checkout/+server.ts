@@ -27,6 +27,7 @@ export const POST: RequestHandler = async ({ locals, platform }) => {
     if (error instanceof StripeNotConfiguredError) {
       return json({ error: "Stripe is not configured" }, { status: 400 });
     }
-    throw error;
+    console.error("[stripe-checkout] Unexpected error:", error);
+    return json({ error: "Payment processing error" }, { status: 500 });
   }
 };
