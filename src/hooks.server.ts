@@ -3,6 +3,7 @@ import { sequence } from "@sveltejs/kit/hooks";
 import { building } from "$app/environment";
 import { PUBLIC_SENTRY_DSN } from "$env/static/public";
 import { handleErrorWithSentry, sentryHandle, initCloudflareSentryHandle } from "@sentry/sveltekit";
+import { sentryBeforeSend } from "$lib/server/sentry-sanitize";
 import { createAuth } from "$lib/server/auth";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { isRateLimited, checkRateLimit } from "$lib/server/rate-limit";
@@ -200,6 +201,7 @@ export const handle = sequence(
   initCloudflareSentryHandle({
     dsn: PUBLIC_SENTRY_DSN,
     tracesSampleRate: 1.0,
+    beforeSend: sentryBeforeSend,
   }),
   sentryHandle(),
   appHandle,
